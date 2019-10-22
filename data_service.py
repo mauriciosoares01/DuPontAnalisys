@@ -2,13 +2,9 @@
 
 import pandas as pd
 
-# def header(msg):
-#     print("-" * 50)
-#     print("[" + msg + "]")
-    
 def financial():
-    financialData = pd.read_csv("financialData.csv")
-    return(financialData)
+    financial_data = pd.read_csv("financial_data.csv")
+    return(financial_data)
 
 def ipca():
     ipca = pd.read_csv("ipca.csv", index_col ="Mês/Ano")
