@@ -38,8 +38,24 @@ def dupont_frame(data):
     # set the empty DataFrame
     data_per_year = pd.DataFrame(columns=["ano", "trimestre", "margem liquida", "giro de ativos", "alavancagem", "roa", "roe"])
 
+    # iterates the DataFrame with the financial data per row
     for i in range (0, len(data.index)):
-        pass
+        data_serie = data.iloc[i]      # stores the i-row
+        # calculates all DuPonts ratios
+        profit_margin = dupont_model.calc_profit_margin(data_serie.iloc[2],data_serie.iloc[3])
+        asset_turnover = dupont_model.calc_asset_turnover(data_serie.iloc[3],data_serie.iloc[4]) 
+        leverage = dupont_model.calc_leverage(data_serie.iloc[4],data_serie.iloc[5])
+        roa = dupont_model.calc_roa(profit_margin,asset_turnover)
+        roe = dupont_model.calc_roe(roa,leverage)
+        
+        tmp = pd[data_serie.iloc[0],data_serie.iloc[1],profit_margin,asset_turnover,leverage,roa,roe]
+        data_per_year = data_per_year.append(tmp)
+        print(tmp)
+        
+
+
+
+
 
 main()
 
