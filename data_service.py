@@ -1,6 +1,10 @@
 # coding=utf-8
 
+# this file colect all the needed data to applys Dupont model
+# use  the same pattern in the csv structure to works porperly with your data
+
 import pandas as pd
+
 
 def financial():
     financial_data = pd.read_csv("financial_data.csv")
