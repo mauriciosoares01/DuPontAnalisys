@@ -9,25 +9,33 @@ def main():
     financial_data = data_service.financial()      # stores the values of the financial demonstrative by quarter
     ipca = data_service.ipca()                    # stores the values of the IPCA interest by month
     selic =data_service.selic()                   # stores the values of the SELIC insterest by month
+    pib =data_service.pib()                   # stores the values of the SELIC insterest by month
 
     # adjust ipca and selic values to quarter
     adjusted_ipca = adjust_values_to_quarter(ipca).T
     adjusted_selic = adjust_values_to_quarter(selic).T
 
-    # extract only the values from the dataframe
+
+     # extract only the values from the dataframe
     ipca_to_list = adjusted_ipca.values
     selic_to_list = adjusted_selic.values
+    pib_to_list = pib.values
 
     ipca_serie = []
     selic_serie = []
+    pib_serie = []
 
     # transforms to a serie
     for i in range(0,len(ipca_to_list)):
         ipca_serie.extend(ipca_to_list[i])
         selic_serie.extend(selic_to_list[i])
 
+    # transforms pib to a serie
+    for i in range(0,len(pib_to_list)):
+        pib_serie.extend(pib_to_list[i])
+        
     # make the calculations and saves in a file
-    result = dupont_frame(financial_data, ipca_serie, selic_serie)   
+    result = dupont_frame(financial_data, ipca_serie, selic_serie, pib_serie)   
     save_results(result)
 
     graph_plot(result)
@@ -51,9 +59,9 @@ def quarters_interest(column):
     return (column[0] + 1) * (column[1] + 1) * (column[2] + 1) - 1  # month to quarter conversion
 
 # set a DataFrame for DuPont's Model results and stores into a csv file
-def dupont_frame(data, ipca_data, selic_data):
+def dupont_frame(data, ipca_data, selic_data, pib_data):
     # set the empty DataFrame
-    data_per_year = pd.DataFrame(columns=["ano", "trimestre", "margem liquida", "giro de ativos", "alavancagem", "roa", "roe", "ipca", "selic"])
+    data_per_year = pd.DataFrame(columns=["ano", "trimestre", "margem_liquida", "giro_de_ativos", "alavancagem", "roa", "roe", "ipca", "selic", "pib"])
 
     # iterates the DataFrame with the financial data per row
     for i in range (0, len(data.index)):
@@ -66,7 +74,7 @@ def dupont_frame(data, ipca_data, selic_data):
         roe = dupont_model.calc_roe(roa,leverage)
         
         # stores the quarters serie in a temporary variable
-        tmp = [data_serie.iloc[0],data_serie.iloc[1],profit_margin,asset_turnover,leverage,roa,roe,ipca_data[i],selic_data[i]]
+        tmp = [data_serie.iloc[0],data_serie.iloc[1],profit_margin,asset_turnover,leverage,roa,roe,ipca_data[i],selic_data[i], pib_data[i]]
 
         # insert each quarter in the end of the dataframe
         data_per_year = data_per_year.append(pd.Series(tmp, index=data_per_year.columns), ignore_index="True")
@@ -79,15 +87,15 @@ def save_results(data):
 
 def graph_plot(data):
     # set the period of your database replacing the 'start' and 'end' parameters
-    main_graph = pd.DataFrame(data, columns=['roa', 'roe', 'ipca', 'selic']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
+    main_graph = pd.DataFrame(data, columns=['selic', 'ipca', 'alavancagem' ]).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
     roa_roe_graph = pd.DataFrame(data, columns=['roa', 'roe']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
-    roa_ipca_selic_graph = pd.DataFrame(data, columns=['roa', 'ipca', 'selic']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
-    roe_ipca_selic_graph = pd.DataFrame(data, columns=['roe', 'ipca', 'selic']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
+    # roa_ipca_selic_graph = pd.DataFrame(data, columns=['roa', 'ipca', 'selic']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
+    # roe_ipca_selic_graph = pd.DataFrame(data, columns=['roe', 'ipca', 'selic']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
 
     main_graph.plot(grid=True)
     roa_roe_graph.plot(grid=True)
-    roa_ipca_selic_graph.plot(grid=True)
-    roe_ipca_selic_graph.plot(grid=True)
+    # roa_ipca_selic_graph.plot(grid=True)
+    # roe_ipca_selic_graph.plot(grid=True)
 
     plt.show()
 

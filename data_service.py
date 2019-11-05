@@ -18,5 +18,9 @@ def selic():
     selic = pd.read_csv("selic.csv", index_col ="Mês/Ano")
     return(selic)
 
+def pib():
+    selic = pd.read_csv("pib.csv", index_col="data")
+    return(selic)
+
 
 
