@@ -38,7 +38,7 @@ def main():
     result = dupont_frame(financial_data, ipca_serie, selic_serie, pib_serie)   
     save_results(result)
 
-    graph_plot(result)
+    graph_plot(result, financial_data)
 
 # group values by quarter
 def adjust_values_to_quarter(data):
@@ -85,17 +85,21 @@ def save_results(data):
     # saves the results into a .csv file
     data.to_csv(r'./dupont_analisys_result.csv')
 
-def graph_plot(data):
+def graph_plot(data, financial_data):
     # set the period of your database replacing the 'start' and 'end' parameters
-    main_graph = pd.DataFrame(data, columns=['selic', 'ipca', 'alavancagem' ]).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
-    roa_roe_graph = pd.DataFrame(data, columns=['roa', 'roe']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
-    # roa_ipca_selic_graph = pd.DataFrame(data, columns=['roa', 'ipca', 'selic']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
-    # roe_ipca_selic_graph = pd.DataFrame(data, columns=['roe', 'ipca', 'selic']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
+    extern_factors_graph = pd.DataFrame(data, columns=['roe', 'roa', 'ipca', 'selic' ]).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
+    intern_factors_graph = pd.DataFrame(data, columns=['margem_liquida', 'giro_de_ativos', 'alavancagem']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
+    graph_3 = pd.DataFrame(data, columns=['alavancagem', 'pib']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q")) 
+    graph_4 = pd.DataFrame(data, columns=['roe', 'roa', 'pib']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q")) 
+    graph_5 = pd.DataFrame(financial_data, columns=['lucroLiquido', 'vendas', 'ativos', 'patrimonioLiquido']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q")) 
+    
 
-    main_graph.plot(grid=True)
-    roa_roe_graph.plot(grid=True)
-    # roa_ipca_selic_graph.plot(grid=True)
-    # roe_ipca_selic_graph.plot(grid=True)
+    extern_factors_graph.plot(grid=True, marker=".")
+    intern_factors_graph.plot(grid=True, marker=".")
+    graph_3.plot(grid=True, marker=".")
+    graph_4.plot(grid=True, marker=".")
+    graph_5.plot(grid=True, marker=".")
+
 
     plt.show()
 
