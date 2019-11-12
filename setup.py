@@ -14,7 +14,6 @@ def main():
     adjusted_ipca = adjust_values_to_quarter(ipca).T
     adjusted_selic = adjust_values_to_quarter(selic).T
 
-
      # extract only the values from the dataframe
     ipca_to_list = adjusted_ipca.values
     selic_to_list = adjusted_selic.values
@@ -87,13 +86,24 @@ def graph_plot(data, financial_data):
     
     # plot the graphs
     roe_roa_graph.plot(grid=True, marker=".")
+    plt.xlabel('Trimestres')
+    plt.ylabel('Valor do indicador')
+
     intern_factors_graph.plot(grid=True, marker=".")
-    financial_data_graph.plot(grid=True, marker=".")
+    plt.xlabel('Trimestres')
+    plt.ylabel('Valor do indicador')
+
     extern_factors_graph.plot(grid=True, marker=".")
+    plt.xlabel('Trimestres')
+    plt.ylabel('Valor do indicador')
+
+    financial_data_graph.plot(grid=True, marker=".")
+    plt.xlabel('Trimestres')
+    plt.ylabel('Reais')
     
+    plt.show()
 
     # show all graphs ploted
-    plt.show()
 
 main()
 
