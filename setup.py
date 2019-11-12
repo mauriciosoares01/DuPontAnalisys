@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # run > pip install -r requirements.txt
 
 import pandas as pd
@@ -25,7 +27,23 @@ def main():
     for i in range(0,len(ipca_to_list)):
         ipca_serie.extend(ipca_to_list[i])
         selic_serie.extend(selic_to_list[i])
-        
+    
+    ipca_sum = 0
+    selic_sum = 0
+
+    print(ipca_serie)
+    # transfoms to accumulated values
+    for i in range(1,len(ipca_serie)):
+        if ((i-1)%4 == 0):
+            ipca_sum = 0
+            selic_sum = 0
+        ipca_sum = ipca_sum + ipca_serie[i-1]
+        ipca_serie[i-1] = ipca_sum
+        selic_sum = selic_sum + selic_serie[i-1]
+        selic_serie[i-1] = selic_sum
+
+    print(ipca_serie)
+
     # make the calculations and saves in a file
     result = dupont_frame(financial_data, ipca_serie, selic_serie)   
     save_results(result)
@@ -81,29 +99,32 @@ def graph_plot(data, financial_data):
     # set the period of your database replacing the 'start' and 'end' parameters
     roe_roa_graph = pd.DataFrame(data, columns=['roe', 'roa']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
     intern_factors_graph = pd.DataFrame(data, columns=['margem_liquida', 'giro_de_ativos', 'alavancagem']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
-    financial_data_graph = pd.DataFrame(financial_data, columns=['lucroLiquido', 'vendas', 'ativos', 'patrimonioLiquido']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q")) 
     extern_factors_graph = pd.DataFrame(data, columns=['roe', 'roa', 'ipca', 'selic' ]).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q"))
+    financial_data_graph = pd.DataFrame(financial_data, columns=['lucroLiquido', 'vendas', 'ativos', 'patrimonioLiquido']).set_index(pd.date_range(start='1/1/2012', end='1/1/2019', freq="Q")) 
     
     # plot the graphs
     roe_roa_graph.plot(grid=True, marker=".")
     plt.xlabel('Trimestres')
     plt.ylabel('Valor do indicador')
+    plt.title(u'Série histórica de ROE e ROA')
 
     intern_factors_graph.plot(grid=True, marker=".")
+    plt.title(u'Série histórica de margem líquida, giro de ativos e alavancagem')
     plt.xlabel('Trimestres')
     plt.ylabel('Valor do indicador')
 
     extern_factors_graph.plot(grid=True, marker=".")
+    plt.title(u'Série histórica de ROE, ROA, IPCA e SELIC')
     plt.xlabel('Trimestres')
     plt.ylabel('Valor do indicador')
 
     financial_data_graph.plot(grid=True, marker=".")
+    plt.title(u'Série histórica de lucro líquido, vendas, ativos e patrimônio líquido em notação 10^8 reais')
     plt.xlabel('Trimestres')
     plt.ylabel('Reais')
     
-    plt.show()
-
     # show all graphs ploted
+    plt.show()
 
 main()
 
